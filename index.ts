@@ -21,7 +21,7 @@ async function renderPage(url: string): Promise<string> {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox"],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     console.log("hitting url", url);
