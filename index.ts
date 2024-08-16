@@ -1,6 +1,5 @@
 import express from "express";
 import { URL } from "url";
-import playwright from "playwright";
 import dotenv from "dotenv";
 dotenv.config();
 import puppeteer, { Browser } from "puppeteer";
@@ -23,6 +22,8 @@ async function renderPage(url: string): Promise<string> {
     const browser = await puppeteer.launch({
       headless: true,
     });
+
+    console.log("hitting url", url);
 
     const page = await browser.newPage();
 
