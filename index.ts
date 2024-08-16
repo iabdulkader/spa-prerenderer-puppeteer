@@ -19,7 +19,7 @@ async function initBrowser() {
 
 async function renderPage(url: string): Promise<string> {
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       headless: true,
     });
 
@@ -52,6 +52,7 @@ async function renderPage(url: string): Promise<string> {
 
 app.get("*", async (req, res) => {
   const fullUrl = new URL(req.url, MAIN_SITE_URL).toString();
+  console.log("fullUrl", fullUrl);
 
   try {
     const renderedContent = await renderPage(fullUrl);
@@ -71,6 +72,16 @@ async function serve() {
   } catch (error) {
     console.error("Error starting server:", error);
   }
+
+  process.on("SIGINT", async () => {
+    try {
+      await browser.close();
+      process.exit(0);
+    } catch (err) {
+      console.error(err);
+      process.exit(1);
+    }
+  });
 }
 
 serve();
