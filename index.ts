@@ -1,9 +1,11 @@
 import express from "express";
-import { URL } from "url";
-import dotenv from "dotenv";
-dotenv.config();
 import puppeteer, { Browser } from "puppeteer";
 import NodeCache from "node-cache";
+
+import { URL } from "url";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL || 600) });
 
@@ -24,7 +26,7 @@ async function initBrowser() {
       "--disable-accelerated-2d-canvas",
       "--no-first-run",
       "--no-zygote",
-      "--single-process", // <- this one is important
+      "--single-process",
       "--disable-gpu",
     ],
   });
