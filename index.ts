@@ -3,6 +3,9 @@ import { URL } from "url";
 import dotenv from "dotenv";
 dotenv.config();
 import puppeteer, { Browser } from "puppeteer";
+import NodeCache from "node-cache";
+
+const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL || 600) });
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -59,7 +62,14 @@ app.get("*", async (req, res) => {
   console.log("fullUrl", fullUrl);
 
   try {
+    const cachedContent = cache.get<string>(fullUrl);
+
+    if (cachedContent) {
+      return res.send(cachedContent);
+    }
+
     const renderedContent = await renderPage(fullUrl);
+    cache.set(fullUrl, renderedContent);
     res.send(renderedContent);
   } catch (error) {
     console.error("Error rendering page:", error);
