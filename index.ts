@@ -7,12 +7,13 @@ import { URL } from "url";
 import dotenv from "dotenv";
 dotenv.config();
 
-const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL || 600) });
-
 const app = express();
 const port = process.env.PORT || 5000;
 
+const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL || 600) });
+
 const MAIN_SITE_URL = process.env.MAIN_SITE_URL || "http://localhost:3000";
+const ONLY_MOBILE = process.env.ONLY_MOBILE === "true";
 
 let browser: Browser;
 
@@ -36,17 +37,19 @@ async function renderPage(url: string): Promise<string> {
   try {
     const page = await browser.newPage();
 
-    await page.setViewport({
-      width: 375,
-      height: 667,
-      isMobile: true,
-      hasTouch: true,
-      deviceScaleFactor: 3,
-    });
+    if (ONLY_MOBILE) {
+      await page.setViewport({
+        width: 375,
+        height: 667,
+        isMobile: true,
+        hasTouch: true,
+        deviceScaleFactor: 3,
+      });
 
-    await page.setUserAgent(
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
-    );
+      await page.setUserAgent(
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
+      );
+    }
 
     await page.goto(url, { waitUntil: "load", timeout: 20000 });
 

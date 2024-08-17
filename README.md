@@ -43,7 +43,10 @@ pnpm install
 ```
 PORT=5000
 MAIN_SITE_URL=http://localhost:3000
+# in seconds
 CACHE_TTL=
+# set to true to only render mobile viewports else false or ignore
+ONLY_MOBILE=
 ```
 
 4. Build the TypeScript code:
