@@ -14,27 +14,21 @@ let browser: Browser;
 async function initBrowser() {
   browser = await puppeteer.launch({
     headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process", // <- this one is important
+      "--disable-gpu",
+    ],
   });
 }
 
 async function renderPage(url: string): Promise<string> {
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--single-process", // <- this one is important
-        "--disable-gpu",
-      ],
-    });
-
-    console.log("hitting url", url);
-
     const page = await browser.newPage();
 
     await page.setViewport({
@@ -93,5 +87,14 @@ async function serve() {
     }
   });
 }
+
+async function restartBrowser() {
+  if (browser) {
+    await browser.close();
+  }
+  await initBrowser();
+}
+
+setInterval(restartBrowser, 1000 * 60 * 60);
 
 serve();
