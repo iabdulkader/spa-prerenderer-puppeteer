@@ -17,6 +17,7 @@ A lightning-fast, resource-efficient prerenderer for Single Page Applications bu
 - [Puppeteer](https://pptr.dev/) - Headless Chrome Node.js API
 - [dotenv](https://github.com/motdotla/dotenv) - Loads environment variables from .env file
 - [TypeScript](https://www.typescriptlang.org/) - Typed superset of JavaScript
+- [node-cache](https://github.com/mpneuried/nodecache) - Simple and complete NodeJS cache library
 
 ## 🚀 Getting Started
 
