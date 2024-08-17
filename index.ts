@@ -7,6 +7,8 @@ import { URL } from "url";
 import dotenv from "dotenv";
 dotenv.config();
 
+let browser: Browser;
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -14,8 +16,6 @@ const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL || 600) });
 
 const MAIN_SITE_URL = process.env.MAIN_SITE_URL || "http://localhost:3000";
 const ONLY_MOBILE = process.env.ONLY_MOBILE === "true";
-
-let browser: Browser;
 
 async function initBrowser() {
   browser = await puppeteer.launch({
@@ -62,6 +62,13 @@ async function renderPage(url: string): Promise<string> {
   }
 }
 
+async function restartBrowser() {
+  if (browser) {
+    await browser.close();
+  }
+  await initBrowser();
+}
+
 app.get("*", async (req, res) => {
   const fullUrl = new URL(req.url, MAIN_SITE_URL).toString();
   console.log("fullUrl", fullUrl);
@@ -101,13 +108,6 @@ async function serve() {
       process.exit(1);
     }
   });
-}
-
-async function restartBrowser() {
-  if (browser) {
-    await browser.close();
-  }
-  await initBrowser();
 }
 
 setInterval(restartBrowser, 1000 * 60 * 60);
